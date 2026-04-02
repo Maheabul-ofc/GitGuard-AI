@@ -4,11 +4,13 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
 // Load environment variables
-dotenv.config({ path: '../.env' });
+// Try parent directory first (local dev), then current directory, then fall back
+// to environment variables injected by Docker Compose
+const path = require('path');
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-// If .env not found at parent level, try current directory
 if (!process.env.MONGO_URI) {
-  dotenv.config();
+  dotenv.config({ path: path.resolve(__dirname, '.env') });
 }
 
 // Connect to MongoDB
